@@ -29,6 +29,7 @@ const places = {
     type: 'food',
     icon: '🦀',
     lat: 13.732227, lng: 100.566378,
+    day: [2],
     tags: ['Day 2 · 晚餐', '餐飲'],
     desc: 'EMsphere GM 樓層。必點：粉絲焗蟹（Pu Ob Woonsen）。',
     budget: '💰 兩人約 THB 800–1,200',
@@ -267,7 +268,7 @@ function markerEmoji(type) {
 
 function filterMarkers(day) {
   Object.entries(markers).forEach(([id, obj]) => {
-    if (day === 'all' || obj.days.includes(parseInt(day))) {
+    if (day === 'all' || (obj.days && obj.days.includes(parseInt(day)))) {
       obj.marker.addTo(map);
     } else {
       obj.marker.remove();
@@ -370,6 +371,12 @@ function switchPanel(panelId) {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (map) map.invalidateSize(true);
+        // Sync map markers with current active day
+        filterMarkers(activeDay);
+        // Sync map day pills
+        document.querySelectorAll('.day-pill').forEach(p => {
+          p.classList.toggle('active', p.dataset.day === activeDay);
+        });
       });
     });
   }
